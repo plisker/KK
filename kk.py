@@ -1,6 +1,7 @@
 import random
 import math
 import bisect as b
+import timeit
 
 #TODO: NEED to increase Max_Iter
 max_iter = 25000
@@ -74,7 +75,7 @@ def hill_climb_rm(A):
 #Simulated annealing
 def simul_anneal_rm(A):
 	S=gen_sol_rm(len(A))
-	S_1=S
+	S_1=list(S)
 	for i in range(max_iter):
 		S_0=neighbor_rm(S)
 		if res_rm(S_0,A)<res_rm(S,A):
@@ -83,7 +84,7 @@ def simul_anneal_rm(A):
 		elif random.random<math.exp(-(res_rm(S_0,A)-res_rm(S,A))/T(i)):
 			S=S_0
 		if res_rm(S,A)<res_rm(S_1,A):
-			S_1=S
+			S_1=list(S)
 	return res_rm(S_1,A)
 
 #PRE-PARTITIONING
@@ -135,7 +136,7 @@ def hill_climb_p(A):
 #Simulated annealing
 def simul_anneal_p(A):
 	S=gen_sol_p(len(A))
-	S_1=S
+	S_1=list(S)
 	for i in range(max_iter):
 		S_0=neighbor_p(S)
 		if res_p(S_0,A)<res_p(S,A):
@@ -144,7 +145,7 @@ def simul_anneal_p(A):
 		elif random.random<math.exp(-(res_p(S_0,A)-res_p(S,A))/T(i)):
 			S=S_0
 		if res_p(S,A)<res_p(S_1,A):
-			S_1=S
+			S_1=list(S)
 	return res_p(S_1,A)
 
 def create_sequence(n):
@@ -159,25 +160,68 @@ def create50():
 		A.append(create_sequence(seq_length))
 	return A
 
+# A sequence 100 long, for testing
+# B=[663624386304, 735830574803, 22056186970, 853703990905, 349224180521, 164289210369, 497823485316, 844689263757, 319727052244, 53583990916, 962428736619, 777603587687, 327979757846, 280637398266, 809397082800, 208709837888, 516283718133, 659688397998, 408107813985, 545382835743, 594223555753, 593778949830, 355300410404, 518437831638, 181434342633, 703445799093, 520399603289, 96514483053, 651258852771, 32743173307, 287222936258, 669717692465, 671041948515, 634532994101, 154708529520, 300850114682, 595802788087, 873507915545, 95909992886, 78162405935, 340450165516, 491489767680, 904890415352, 377225522896, 494389471110, 447246199378, 770997288386, 346654933830, 628330352221, 217686196136, 471292578501, 906435672272, 176003188152, 508942767356, 489322563863, 809051268956, 289667615584, 60282328411, 16456585202, 997620946374, 841655551891, 850594162370, 571214504524, 215684474250, 52180017333, 145758398896, 644013928606, 651979024238, 222278737721, 594385028721, 296773323744, 114679028421, 277837702345, 307940293345, 797198941126, 270205231989, 913618911988, 370913659874, 794763057040, 445145673719, 116695737852, 957228714061, 262765287200, 962766391759, 323139841133, 958431515716, 967920254653, 224514464463, 1898767134, 201476872152, 418154413843, 494081317546, 677582285269, 371489604400, 797685290795, 186824592442, 469409602634, 549322326239, 96516781307, 342394558103]
 
+# start_t=timeit.default_timer()
+# a_kk=kk(B)
+# end_t=timeit.default_timer()
+# print("KK:", a_kk)
+# print("KK Time:", end_t-start_t)
+	
+# rrr=repeat_rand_rm(B)
+# rrp=repeat_rand_p(B)
+# print("RRR:", rrr, "RRP", rrp)
+# print(rrr)
+
+# hcr=hill_climb_rm(B)
+# hcp=hill_climb_p(B)
+# print("HCR", hcr, "HCP", hcp)
+
+# sar=simul_anneal_rm(B)
+# sap=simul_anneal_p(B)
+# print("SAR", sar, "SAP", sap)
 
 A=create50()
 for i in range(50):
 	print("This is loop number {}".format(i+1))
+
+	start_t=timeit.default_timer()
 	a_kk=kk(A[i])
+	end_t=timeit.default_timer()
+
 	print("KK:", a_kk)
+	print("KK Time:", end_t-start_t)
 
+	start_t1=timeit.default_timer()
 	rrr=repeat_rand_rm(A[i])
+	end_t1=timeit.default_timer()
+
+	start_t2=timeit.default_timer()
 	rrp=repeat_rand_p(A[i])
+	end_t2 = timeit.default_timer()
 	print("RRR:", rrr, "RRP", rrp)
+	print("RRR Time:", end_t1-start_t1, "RRP Time:", end_t2-start_t2)
 
+	start_t1=timeit.default_timer()	
 	hcr=hill_climb_rm(A[i])
-	hcp=hill_climb_p(A[i])
-	print("HCR", hcr, "HCP", hcp)
+	end_t1=timeit.default_timer()
 
+	start_t2=timeit.default_timer()
+	hcp=hill_climb_p(A[i])
+	end_t2=timeit.default_timer()
+	print("HCR", hcr, "HCP", hcp)
+	print("HCR Time:", end_t1-start_t1, "HCP Time:", end_t2-start_t2)
+
+	start_t1=timeit.default_timer()
 	sar=simul_anneal_rm(A[i])
+	end_t1=timeit.default_timer()
+
+	start_t2=timeit.default_timer()
 	sap=simul_anneal_p(A[i])
+	end_t2=timeit.default_timer()
 	print("SAR", sar, "SAP", sap)
+	print("SAR Time:", end_t1-start_t1, "SAP Time:", end_t2-start_t2)
 
 
 
