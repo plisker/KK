@@ -3,7 +3,7 @@ import math
 import bisect as b
 
 #TODO: NEED to increase Max_Iter
-max_iter = 250
+max_iter = 25000
 seq_length = 100
 
 #Karmarkar-Karp Algorithm
