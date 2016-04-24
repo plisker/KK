@@ -81,7 +81,7 @@ def simul_anneal_rm(A):
 		if res_rm(S_0,A)<res_rm(S,A):
 			S=S_0
 		#replace w/ probability e^((res(S_0)-res(S))/T(i))
-		elif random.random<math.exp(-(res_rm(S_0,A)-res_rm(S,A))/T(i)):
+		elif float(random.random())<math.exp(-(res_rm(S_0,A)-res_rm(S,A))/T(i)):
 			S=S_0
 		if res_rm(S,A)<res_rm(S_1,A):
 			S_1=list(S)
@@ -142,7 +142,7 @@ def simul_anneal_p(A):
 		if res_p(S_0,A)<res_p(S,A):
 			S=S_0
 		#replace w/ probability e^((res(S_0)-res(S))/T(i))
-		elif random.random<math.exp(-(res_p(S_0,A)-res_p(S,A))/T(i)):
+		elif float(random.random())<math.exp(-(res_p(S_0,A)-res_p(S,A))/T(i)):
 			S=S_0
 		if res_p(S,A)<res_p(S_1,A):
 			S_1=list(S)
@@ -200,7 +200,7 @@ for i in range(50):
 	start_t2=timeit.default_timer()
 	rrp=repeat_rand_p(A[i])
 	end_t2 = timeit.default_timer()
-	print("RRR:", rrr, "RRP", rrp)
+	print("RRR:", rrr, "RRP:", rrp)
 	print("RRR Time:", end_t1-start_t1, "RRP Time:", end_t2-start_t2)
 
 	start_t1=timeit.default_timer()	
@@ -210,7 +210,7 @@ for i in range(50):
 	start_t2=timeit.default_timer()
 	hcp=hill_climb_p(A[i])
 	end_t2=timeit.default_timer()
-	print("HCR", hcr, "HCP", hcp)
+	print("HCR:", hcr, "HCP:", hcp)
 	print("HCR Time:", end_t1-start_t1, "HCP Time:", end_t2-start_t2)
 
 	start_t1=timeit.default_timer()
@@ -220,7 +220,7 @@ for i in range(50):
 	start_t2=timeit.default_timer()
 	sap=simul_anneal_p(A[i])
 	end_t2=timeit.default_timer()
-	print("SAR", sar, "SAP", sap)
+	print("SAR:", sar, "SAP:", sap)
 	print("SAR Time:", end_t1-start_t1, "SAP Time:", end_t2-start_t2)
 
 
