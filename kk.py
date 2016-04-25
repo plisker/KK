@@ -2,9 +2,10 @@ import random
 import math
 import bisect as b
 import timeit
+import csv
 
 #TODO: NEED to increase Max_Iter
-max_iter = 25000
+max_iter = 250000
 seq_length = 100
 
 #Karmarkar-Karp Algorithm
@@ -182,49 +183,67 @@ def create50():
 # sap=simul_anneal_p(B)
 # print("SAR", sar, "SAP", sap)
 
+Residues=[["KK", "Repeated Random R", "Repeated Random P", "Hill Climbing R", "Hill Climbing P", "Simulated Annealing R", "Simulated Annealing P"]]
+Times=[["KK", "Repeated Random R", "Repeated Random P", "Hill Climbing R", "Hill Climbing P", "Simulated Annealing R", "Simulated Annealing P"]]
+
 A=create50()
 for i in range(50):
-	print("This is loop number {}".format(i+1))
+	# print("This is loop number {}".format(i+1))
 
 	start_t=timeit.default_timer()
 	a_kk=kk(A[i])
 	end_t=timeit.default_timer()
-
-	print("KK:", a_kk)
-	print("KK Time:", end_t-start_t)
+	kk_time=end_t-start_t
+	# print("KK:", a_kk)
+	# print("KK Time:", kk_time)
 
 	start_t1=timeit.default_timer()
 	rrr=repeat_rand_rm(A[i])
 	end_t1=timeit.default_timer()
+	rrr_time=end_t1-start_t1
 
 	start_t2=timeit.default_timer()
 	rrp=repeat_rand_p(A[i])
 	end_t2 = timeit.default_timer()
-	print("RRR:", rrr, "RRP:", rrp)
-	print("RRR Time:", end_t1-start_t1, "RRP Time:", end_t2-start_t2)
+	rrp_time=end_t2-start_t2
+	# print("RRR:", rrr, "RRP:", rrp)
+	# print("RRR Time:", rrr_time, "RRP Time:", rrp_time)
 
 	start_t1=timeit.default_timer()	
 	hcr=hill_climb_rm(A[i])
 	end_t1=timeit.default_timer()
+	hcr_time = end_t1-start_t1
 
 	start_t2=timeit.default_timer()
 	hcp=hill_climb_p(A[i])
 	end_t2=timeit.default_timer()
-	print("HCR:", hcr, "HCP:", hcp)
-	print("HCR Time:", end_t1-start_t1, "HCP Time:", end_t2-start_t2)
+	hcp_time = end_t2-start_t2
+	# print("HCR:", hcr, "HCP:", hcp)
+	# print("HCR Time:", hcr_time, "HCP Time:", hcp_time)
 
 	start_t1=timeit.default_timer()
 	sar=simul_anneal_rm(A[i])
 	end_t1=timeit.default_timer()
+	sar_time = end_t1-start_t1
+
 
 	start_t2=timeit.default_timer()
 	sap=simul_anneal_p(A[i])
 	end_t2=timeit.default_timer()
-	print("SAR:", sar, "SAP:", sap)
-	print("SAR Time:", end_t1-start_t1, "SAP Time:", end_t2-start_t2)
+	sap_time = end_t2-start_t2
+	# print("SAR:", sar, "SAP:", sap)
+	# print("SAR Time:", sar_time, "SAP Time:", sap_time)
+
+	Residues.append([a_kk, rrr, rrp, hcr, hcp, sar, sap])
+	Times.append([kk_time, rrr_time, rrp_time, hcr_time, hcp_time, sar_time, sap_time])
 
 
+with open('Residues.csv', 'w', newline='') as fp:
+    a = csv.writer(fp, delimiter=',')
+    data = Residues
+    a.writerows(data)
 
-
-
-
+with open('Times.csv', 'w', newline='') as fp:
+    a = csv.writer(fp, delimiter=',')
+    data = Times
+    a.writerows(data)
