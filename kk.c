@@ -32,7 +32,7 @@ int cmp(const void* a, const void* b){
 }
 
 // Karmarkar-Karp
-int kk(long long int* A){
+long long int kk(long long int* A){
 	qsort(A, ARRAY_SIZE, sizeof(long long int), cmp);
 	while(A[1] != 0){
 		A[0] = A[0]-A[1];
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
     }
     fclose(file);
 
-    int residue = kk(A);
-    printf("%i\n", residue);
+    long long int residue = kk(A);
+    printf("%lld\n", residue);
     return 0;
 }
