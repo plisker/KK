@@ -12,7 +12,6 @@ import bisect as b
 import timeit
 import csv
 
-#TODO: NEED to increase Max_Iter
 max_iter = 25000
 seq_length = 100
 
