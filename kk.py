@@ -5,7 +5,7 @@ import timeit
 import csv
 
 #TODO: NEED to increase Max_Iter
-max_iter = 250000
+max_iter = 25000
 seq_length = 100
 
 #Karmarkar-Karp Algorithm
@@ -188,7 +188,7 @@ Times=[["KK", "Repeated Random R", "Repeated Random P", "Hill Climbing R", "Hill
 
 A=create50()
 for i in range(50):
-	# print("This is loop number {}".format(i+1))
+	print("This is loop number {}".format(i+1))
 
 	start_t=timeit.default_timer()
 	a_kk=kk(A[i])
