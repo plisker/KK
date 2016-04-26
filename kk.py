@@ -41,7 +41,8 @@ def gen_sol_rm(n):
 	return S
 
 #Find neighbor
-def neighbor_rm(S):
+def neighbor_rm(S_0):
+	S=list(S_0)
 	i,j=random.randint(0,len(S)-1),random.randint(0,len(S)-1)
 	#ensures i and j are different
 	while i==j:
@@ -105,7 +106,8 @@ def gen_sol_p(n):
 	return S
 
 #Find neighbor
-def neighbor_p(S):
+def neighbor_p(S_0):
+	S=list(S_0)
 	i,j=random.randint(0,len(S)-1),random.randint(0,len(S)-1)
 	while S[i]==j:
 		i,j=random.randint(0,len(S)-1),random.randint(0,len(S)-1)
