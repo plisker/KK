@@ -166,7 +166,7 @@ def create_sequence(n):
 
 def create50():
 	A=[]
-	for i in range(5):
+	for i in range(50):
 		A.append(create_sequence(seq_length))
 	return A
 
@@ -178,7 +178,7 @@ Residues=[["KK", "Repeated Random R", "Repeated Random P", "Hill Climbing R", "H
 Times=[["KK", "Repeated Random R", "Repeated Random P", "Hill Climbing R", "Hill Climbing P", "Simulated Annealing R", "Simulated Annealing P"]]
 
 A=create50()
-for i in range(5):
+for i in range(50):
 	print("This is loop number {}".format(i+1))
 
 	start_t=timeit.default_timer()
