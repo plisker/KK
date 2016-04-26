@@ -66,7 +66,7 @@ def repeat_rand_rm(A):
 		S_0=gen_sol_rm(n)
 		#compare residues, replace if lower
 		if res_rm(S_0,A)<res_rm(S,A):
-			S=S_0
+			S=list(S_0)
 	return res_rm(S,A)
 
 #Hill climbing
@@ -77,7 +77,7 @@ def hill_climb_rm(A):
 		S_0=neighbor_rm(S)
 		#compare residues, replace if lower
 		if res_rm(S_0,A)<res_rm(S,A):
-			S=S_0
+			S=list(S_0)
 	return res_rm(S,A)
 
 #Simulated annealing
@@ -87,10 +87,10 @@ def simul_anneal_rm(A):
 	for i in range(max_iter):
 		S_0=neighbor_rm(S)
 		if res_rm(S_0,A)<res_rm(S,A):
-			S=S_0
+			S=list(S_0)
 		#replace w/ probability e^((res(S_0)-res(S))/T(i))
 		elif float(random.random())<math.exp(-(res_rm(S_0,A)-res_rm(S,A))/T(i)):
-			S=S_0
+			S=list(S_0)
 		if res_rm(S,A)<res_rm(S_1,A):
 			S_1=list(S)
 	return res_rm(S_1,A)
@@ -115,9 +115,9 @@ def neighbor_p(S):
 #Calculate residue given input A and coefficient S (by creating intermediary A')
 def res_p(S,A):
 	n=len(A)
-	A_0=[]
-	for i in range(n):
-		A_0.append(0)
+	A_0=[0]*n
+	# for i in range(n):
+	# 	A_0.append(0)
 	for j in range(n):
 		A_0[S[j]-1] += A[j]
 	return kk(A_0)	
@@ -129,7 +129,7 @@ def repeat_rand_p(A):
 	for i in range(max_iter):
 		S_0 = gen_sol_p(n)
 		if res_p(S_0,A)<res_p(S,A):
-			S=S_0
+			S=list(S_0)
 	return res_p(S,A)
 
 #Hill climbing
@@ -138,7 +138,7 @@ def hill_climb_p(A):
 	for i in range(max_iter):
 		S_0=neighbor_p(S)
 		if res_p(S_0,A)<res_p(S,A):
-			S=S_0
+			S=list(S_0)
 	return res_p(S,A)
 
 #Simulated annealing
@@ -148,10 +148,10 @@ def simul_anneal_p(A):
 	for i in range(max_iter):
 		S_0=neighbor_p(S)
 		if res_p(S_0,A)<res_p(S,A):
-			S=S_0
+			S=list(S_0)
 		#replace w/ probability e^((res(S_0)-res(S))/T(i))
 		elif float(random.random())<math.exp(-(res_p(S_0,A)-res_p(S,A))/T(i)):
-			S=S_0
+			S=list(S_0)
 		if res_p(S,A)<res_p(S_1,A):
 			S_1=list(S)
 	return res_p(S_1,A)
@@ -164,7 +164,7 @@ def create_sequence(n):
 
 def create50():
 	A=[]
-	for i in range(50):
+	for i in range(5):
 		A.append(create_sequence(seq_length))
 	return A
 
@@ -176,7 +176,7 @@ Residues=[["KK", "Repeated Random R", "Repeated Random P", "Hill Climbing R", "H
 Times=[["KK", "Repeated Random R", "Repeated Random P", "Hill Climbing R", "Hill Climbing P", "Simulated Annealing R", "Simulated Annealing P"]]
 
 A=create50()
-for i in range(50):
+for i in range(5):
 	print("This is loop number {}".format(i+1))
 
 	start_t=timeit.default_timer()
