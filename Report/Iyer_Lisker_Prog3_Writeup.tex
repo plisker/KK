@@ -1,0 +1,181 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{boldline}
+\usepackage{listings}
+\usepackage{booktabs}
+%\pagenumbering{gobble}
+
+
+
+
+\topmargin = 0.1in \textwidth=6.7in \textheight=8.6in
+
+\oddsidemargin = 0.01in \evensidemargin = 0.01in
+
+\title{CS 124\\Programming Assignment 3}
+\author{Curren Iyer \& Paul Lisker}
+\date{April 25, 2016}
+
+\begin{document}
+\maketitle
+
+\section{Dynamic Programming Solution for Number-Partition}
+
+Let $A$ be a sequence of $n$ integers that sums up to some number $b$.  Let us construct an $n$ by $b$ matrix $M$.  Here $M(i,j)$ will be used to determine whether a subset of $i$ terms from the sequence $A$ ($s_1,...s_i$) sums up to $j$, in which case the value of $M(i,j)$ will be 1, and 0 otherwise.  We can summarize this property with the following recurrence equation: $$M(i,j) = \max(M(i-1,j),M(i-1,j-s_i))$$
+
+Once the table has been filled in, we can then limit our scope to the last row, $M(n,b_s)$, which denotes whether it is possible to reach some sum $b_s$ using at most all of the $n$ terms in the sequence. We then check to see if $M(n,\frac{b}{2})=1$ (this is the case where it is possible to create a sequence summing to $\frac{b}{2}$, in which case there is 0 residue since there would exist two equally summing partitions).  If this is true, then we return the residue (0).  Otherwise, iterate backwards from $\frac{b}{2}$ for all $x \leq \frac{b}{2}$, stopping at the first value of $x$ such that $M(n,x)=1$.  Finally, return the residue, which is equal to $x-(b-x) = 2x-b$.\\
+
+In terms of running time, creating the array takes time $O(nb)$, finding the value $x$ takes at most time $O(b)$, and backtracking to find the elements in each subset takes time $O(n)$.  Thus the total algorithmic running time is $O(nb)$.
+
+\section{Implementing Karmarkar-Karp Algorithm in $O(n \log{n})$ Steps}
+
+Before we describe the solution let us make the assumption that the values in sequence $A$ are small enough that arithmetic operations take one step.  We can implement KK in $O(n \log{n})$ steps by transforming the input array containing the sequence $A$ into a max-heap, an algorithm that has a running time of $O(n \log{n})$.  We then go through the differencing process as described in the problem spec, with the only difference being that the two largest elements $a_i$ and $a_j$ are popped off the heap ($O(2 \log{n})$), and their difference $|a_i-a_j|$ is inserted back into the heap $O(\log{n})$.  Thus at most this process is run $\frac{n}{2}$ times, making the total algorithmic running time on the order of $O(n \log{n})$ overall.
+
+\section{Discussion of Results}
+As can be seen in the tables found at the end of this section, there is a significant difference in both residues calculated and running time of the various algorithms. Overall, however, two general conclusions can be derived:
+\begin{enumerate}
+\item Pre-Partitioning consistently returns \textit{significantly} better residues than Random
+\item Random is consistently faster in running time than Pre-Partitioning
+\end{enumerate}
+
+
+
+\break
+% Residues of algorithms
+
+\begin{table}[!htbp]
+\centering
+\caption{Residues of Algorithms}
+\label{residues}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{crrrrrrr}
+\cline{2-8}
+\multicolumn{1}{r}{\textbf{}} & \multicolumn{1}{c}{\textbf{KK}} & \multicolumn{2}{c}{\textbf{Repeated Random}} & \multicolumn{2}{c}{\textbf{Hill Climbing}} & \multicolumn{2}{c}{\textbf{Simulated Annealing}} \\ \cline{2-8} 
+\multicolumn{1}{r|}{\textbf{}} & \multicolumn{1}{c|}{\textbf{--}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} \\ \hline
+\multicolumn{1}{|c|}{\textbf{1}} & \multicolumn{1}{r|}{92468} & \multicolumn{1}{r|}{126767794} & \multicolumn{1}{r|}{340} & \multicolumn{1}{r|}{192763984} & \multicolumn{1}{r|}{696} & \multicolumn{1}{r|}{40894316} & \multicolumn{1}{r|}{364} \\ \hline
+\multicolumn{1}{|c|}{\textbf{2}} & \multicolumn{1}{r|}{67336} & \multicolumn{1}{r|}{576168954} & \multicolumn{1}{r|}{168} & \multicolumn{1}{r|}{51437702} & \multicolumn{1}{r|}{730} & \multicolumn{1}{r|}{41436818} & \multicolumn{1}{r|}{136} \\ \hline
+\multicolumn{1}{|c|}{\textbf{3}} & \multicolumn{1}{r|}{386590} & \multicolumn{1}{r|}{51334430} & \multicolumn{1}{r|}{26} & \multicolumn{1}{r|}{257323932} & \multicolumn{1}{r|}{512} & \multicolumn{1}{r|}{132055062} & \multicolumn{1}{r|}{186} \\ \hline
+\multicolumn{1}{|c|}{\textbf{4}} & \multicolumn{1}{r|}{44376} & \multicolumn{1}{r|}{39937528} & \multicolumn{1}{r|}{292} & \multicolumn{1}{r|}{111233184} & \multicolumn{1}{r|}{408} & \multicolumn{1}{r|}{482838262} & \multicolumn{1}{r|}{42} \\ \hline
+\multicolumn{1}{|c|}{\textbf{5}} & \multicolumn{1}{r|}{43404} & \multicolumn{1}{r|}{14767428} & \multicolumn{1}{r|}{24} & \multicolumn{1}{r|}{106050972} & \multicolumn{1}{r|}{232} & \multicolumn{1}{r|}{146761806} & \multicolumn{1}{r|}{224} \\ \hline
+\multicolumn{1}{|c|}{\textbf{6}} & \multicolumn{1}{r|}{4773} & \multicolumn{1}{r|}{29101283} & \multicolumn{1}{r|}{1} & \multicolumn{1}{r|}{1053263161} & \multicolumn{1}{r|}{483} & \multicolumn{1}{r|}{238159113} & \multicolumn{1}{r|}{1979} \\ \hline
+\multicolumn{1}{|c|}{\textbf{7}} & \multicolumn{1}{r|}{685323} & \multicolumn{1}{r|}{591427349} & \multicolumn{1}{r|}{183} & \multicolumn{1}{r|}{187749373} & \multicolumn{1}{r|}{421} & \multicolumn{1}{r|}{67587629} & \multicolumn{1}{r|}{55} \\ \hline
+\multicolumn{1}{|c|}{\textbf{8}} & \multicolumn{1}{r|}{159703} & \multicolumn{1}{r|}{3169689} & \multicolumn{1}{r|}{245} & \multicolumn{1}{r|}{271782181} & \multicolumn{1}{r|}{53} & \multicolumn{1}{r|}{38979105} & \multicolumn{1}{r|}{601} \\ \hline
+\multicolumn{1}{|c|}{\textbf{9}} & \multicolumn{1}{r|}{118384} & \multicolumn{1}{r|}{720881738} & \multicolumn{1}{r|}{8} & \multicolumn{1}{r|}{460355474} & \multicolumn{1}{r|}{682} & \multicolumn{1}{r|}{385550650} & \multicolumn{1}{r|}{158} \\ \hline
+\multicolumn{1}{|c|}{\textbf{10}} & \multicolumn{1}{r|}{125768} & \multicolumn{1}{r|}{344659834} & \multicolumn{1}{r|}{44} & \multicolumn{1}{r|}{321743746} & \multicolumn{1}{r|}{688} & \multicolumn{1}{r|}{16517560} & \multicolumn{1}{r|}{332} \\ \hline
+\multicolumn{1}{|c|}{\textbf{11}} & \multicolumn{1}{r|}{91814} & \multicolumn{1}{r|}{152180948} & \multicolumn{1}{r|}{64} & \multicolumn{1}{r|}{544223036} & \multicolumn{1}{r|}{574} & \multicolumn{1}{r|}{251018090} & \multicolumn{1}{r|}{134} \\ \hline
+\multicolumn{1}{|c|}{\textbf{12}} & \multicolumn{1}{r|}{75352} & \multicolumn{1}{r|}{315924360} & \multicolumn{1}{r|}{30} & \multicolumn{1}{r|}{740878158} & \multicolumn{1}{r|}{416} & \multicolumn{1}{r|}{981606876} & \multicolumn{1}{r|}{206} \\ \hline
+\multicolumn{1}{|c|}{\textbf{13}} & \multicolumn{1}{r|}{584562} & \multicolumn{1}{r|}{104704806} & \multicolumn{1}{r|}{400} & \multicolumn{1}{r|}{2084864} & \multicolumn{1}{r|}{526} & \multicolumn{1}{r|}{15529826} & \multicolumn{1}{r|}{46} \\ \hline
+\multicolumn{1}{|c|}{\textbf{14}} & \multicolumn{1}{r|}{282627} & \multicolumn{1}{r|}{301518893} & \multicolumn{1}{r|}{161} & \multicolumn{1}{r|}{68643519} & \multicolumn{1}{r|}{409} & \multicolumn{1}{r|}{517428657} & \multicolumn{1}{r|}{71} \\ \hline
+\multicolumn{1}{|c|}{\textbf{15}} & \multicolumn{1}{r|}{93787} & \multicolumn{1}{r|}{226703193} & \multicolumn{1}{r|}{291} & \multicolumn{1}{r|}{141474963} & \multicolumn{1}{r|}{111} & \multicolumn{1}{r|}{5485521} & \multicolumn{1}{r|}{217} \\ \hline
+\multicolumn{1}{|c|}{\textbf{16}} & \multicolumn{1}{r|}{9353} & \multicolumn{1}{r|}{74772903} & \multicolumn{1}{r|}{335} & \multicolumn{1}{r|}{150849079} & \multicolumn{1}{r|}{1423} & \multicolumn{1}{r|}{419158697} & \multicolumn{1}{r|}{31} \\ \hline
+\multicolumn{1}{|c|}{\textbf{17}} & \multicolumn{1}{r|}{234769} & \multicolumn{1}{r|}{454171193} & \multicolumn{1}{r|}{221} & \multicolumn{1}{r|}{225596129} & \multicolumn{1}{r|}{1003} & \multicolumn{1}{r|}{31068953} & \multicolumn{1}{r|}{31} \\ \hline
+\multicolumn{1}{|c|}{\textbf{18}} & \multicolumn{1}{r|}{107000} & \multicolumn{1}{r|}{62900010} & \multicolumn{1}{r|}{350} & \multicolumn{1}{r|}{58078076} & \multicolumn{1}{r|}{1158} & \multicolumn{1}{r|}{636062166} & \multicolumn{1}{r|}{358} \\ \hline
+\multicolumn{1}{|c|}{\textbf{19}} & \multicolumn{1}{r|}{643448} & \multicolumn{1}{r|}{142758952} & \multicolumn{1}{r|}{8} & \multicolumn{1}{r|}{122650148} & \multicolumn{1}{r|}{558} & \multicolumn{1}{r|}{72666022} & \multicolumn{1}{r|}{460} \\ \hline
+\multicolumn{1}{|c|}{\textbf{20}} & \multicolumn{1}{r|}{167887} & \multicolumn{1}{r|}{21939941} & \multicolumn{1}{r|}{81} & \multicolumn{1}{r|}{130416247} & \multicolumn{1}{r|}{519} & \multicolumn{1}{r|}{789114943} & \multicolumn{1}{r|}{301} \\ \hline
+\multicolumn{1}{|c|}{\textbf{21}} & \multicolumn{1}{r|}{18833} & \multicolumn{1}{r|}{496652521} & \multicolumn{1}{r|}{221} & \multicolumn{1}{r|}{214623647} & \multicolumn{1}{r|}{453} & \multicolumn{1}{r|}{165260553} & \multicolumn{1}{r|}{189} \\ \hline
+\multicolumn{1}{|c|}{\textbf{22}} & \multicolumn{1}{r|}{22047} & \multicolumn{1}{r|}{40347767} & \multicolumn{1}{r|}{121} & \multicolumn{1}{r|}{1273399013} & \multicolumn{1}{r|}{49} & \multicolumn{1}{r|}{499193463} & \multicolumn{1}{r|}{347} \\ \hline
+\multicolumn{1}{|c|}{\textbf{23}} & \multicolumn{1}{r|}{8076} & \multicolumn{1}{r|}{580036046} & \multicolumn{1}{r|}{114} & \multicolumn{1}{r|}{9671768} & \multicolumn{1}{r|}{208} & \multicolumn{1}{r|}{666986900} & \multicolumn{1}{r|}{108} \\ \hline
+\multicolumn{1}{|c|}{\textbf{24}} & \multicolumn{1}{r|}{48193} & \multicolumn{1}{r|}{11050617} & \multicolumn{1}{r|}{167} & \multicolumn{1}{r|}{465907959} & \multicolumn{1}{r|}{689} & \multicolumn{1}{r|}{28562841} & \multicolumn{1}{r|}{125} \\ \hline
+\multicolumn{1}{|c|}{\textbf{25}} & \multicolumn{1}{r|}{155324} & \multicolumn{1}{r|}{71648884} & \multicolumn{1}{r|}{120} & \multicolumn{1}{r|}{403402374} & \multicolumn{1}{r|}{824} & \multicolumn{1}{r|}{29221524} & \multicolumn{1}{r|}{564} \\ \hline
+\multicolumn{1}{|c|}{\textbf{26}} & \multicolumn{1}{r|}{40600} & \multicolumn{1}{r|}{638825052} & \multicolumn{1}{r|}{36} & \multicolumn{1}{r|}{4615402} & \multicolumn{1}{r|}{268} & \multicolumn{1}{r|}{1169465050} & \multicolumn{1}{r|}{70} \\ \hline
+\multicolumn{1}{|c|}{\textbf{27}} & \multicolumn{1}{r|}{34801} & \multicolumn{1}{r|}{116381983} & \multicolumn{1}{r|}{39} & \multicolumn{1}{r|}{36239955} & \multicolumn{1}{r|}{543} & \multicolumn{1}{r|}{67487995} & \multicolumn{1}{r|}{117} \\ \hline
+\multicolumn{1}{|c|}{\textbf{28}} & \multicolumn{1}{r|}{37767} & \multicolumn{1}{r|}{443882223} & \multicolumn{1}{r|}{309} & \multicolumn{1}{r|}{28883573} & \multicolumn{1}{r|}{3263} & \multicolumn{1}{r|}{102738995} & \multicolumn{1}{r|}{183} \\ \hline
+\multicolumn{1}{|c|}{\textbf{29}} & \multicolumn{1}{r|}{467420} & \multicolumn{1}{r|}{445971314} & \multicolumn{1}{r|}{50} & \multicolumn{1}{r|}{156378880} & \multicolumn{1}{r|}{98} & \multicolumn{1}{r|}{70279766} & \multicolumn{1}{r|}{164} \\ \hline
+\multicolumn{1}{|c|}{\textbf{30}} & \multicolumn{1}{r|}{736825} & \multicolumn{1}{r|}{319585073} & \multicolumn{1}{r|}{129} & \multicolumn{1}{r|}{85443211} & \multicolumn{1}{r|}{511} & \multicolumn{1}{r|}{74260525} & \multicolumn{1}{r|}{59} \\ \hline
+\multicolumn{1}{|c|}{\textbf{31}} & \multicolumn{1}{r|}{117929} & \multicolumn{1}{r|}{1185309299} & \multicolumn{1}{r|}{331} & \multicolumn{1}{r|}{901367949} & \multicolumn{1}{r|}{35} & \multicolumn{1}{r|}{522442917} & \multicolumn{1}{r|}{419} \\ \hline
+\multicolumn{1}{|c|}{\textbf{32}} & \multicolumn{1}{r|}{556744} & \multicolumn{1}{r|}{113609978} & \multicolumn{1}{r|}{222} & \multicolumn{1}{r|}{663760080} & \multicolumn{1}{r|}{1028} & \multicolumn{1}{r|}{178587600} & \multicolumn{1}{r|}{250} \\ \hline
+\multicolumn{1}{|c|}{\textbf{33}} & \multicolumn{1}{r|}{82811} & \multicolumn{1}{r|}{173870329} & \multicolumn{1}{r|}{177} & \multicolumn{1}{r|}{642811099} & \multicolumn{1}{r|}{993} & \multicolumn{1}{r|}{336841041} & \multicolumn{1}{r|}{273} \\ \hline
+\multicolumn{1}{|c|}{\textbf{34}} & \multicolumn{1}{r|}{19491} & \multicolumn{1}{r|}{75034761} & \multicolumn{1}{r|}{103} & \multicolumn{1}{r|}{768327447} & \multicolumn{1}{r|}{1115} & \multicolumn{1}{r|}{126868735} & \multicolumn{1}{r|}{1} \\ \hline
+\multicolumn{1}{|c|}{\textbf{35}} & \multicolumn{1}{r|}{77468} & \multicolumn{1}{r|}{216556444} & \multicolumn{1}{r|}{316} & \multicolumn{1}{r|}{75716328} & \multicolumn{1}{r|}{426} & \multicolumn{1}{r|}{160576888} & \multicolumn{1}{r|}{22} \\ \hline
+\multicolumn{1}{|c|}{\textbf{36}} & \multicolumn{1}{r|}{1100} & \multicolumn{1}{r|}{106433984} & \multicolumn{1}{r|}{82} & \multicolumn{1}{r|}{202636430} & \multicolumn{1}{r|}{82} & \multicolumn{1}{r|}{380721464} & \multicolumn{1}{r|}{252} \\ \hline
+\multicolumn{1}{|c|}{\textbf{37}} & \multicolumn{1}{r|}{126661} & \multicolumn{1}{r|}{37386413} & \multicolumn{1}{r|}{217} & \multicolumn{1}{r|}{511737345} & \multicolumn{1}{r|}{235} & \multicolumn{1}{r|}{53804937} & \multicolumn{1}{r|}{455} \\ \hline
+\multicolumn{1}{|c|}{\textbf{38}} & \multicolumn{1}{r|}{213455} & \multicolumn{1}{r|}{571636187} & \multicolumn{1}{r|}{279} & \multicolumn{1}{r|}{439425125} & \multicolumn{1}{r|}{135} & \multicolumn{1}{r|}{138682931} & \multicolumn{1}{r|}{21} \\ \hline
+\multicolumn{1}{|c|}{\textbf{39}} & \multicolumn{1}{r|}{1214} & \multicolumn{1}{r|}{686821004} & \multicolumn{1}{r|}{124} & \multicolumn{1}{r|}{94534658} & \multicolumn{1}{r|}{70} & \multicolumn{1}{r|}{490599160} & \multicolumn{1}{r|}{40} \\ \hline
+\multicolumn{1}{|c|}{\textbf{40}} & \multicolumn{1}{r|}{784405} & \multicolumn{1}{r|}{52548873} & \multicolumn{1}{r|}{427} & \multicolumn{1}{r|}{70242679} & \multicolumn{1}{r|}{1021} & \multicolumn{1}{r|}{29156967} & \multicolumn{1}{r|}{1055} \\ \hline
+\multicolumn{1}{|c|}{\textbf{41}} & \multicolumn{1}{r|}{61858} & \multicolumn{1}{r|}{355692892} & \multicolumn{1}{r|}{238} & \multicolumn{1}{r|}{15325588} & \multicolumn{1}{r|}{288} & \multicolumn{1}{r|}{111801460} & \multicolumn{1}{r|}{6} \\ \hline
+\multicolumn{1}{|c|}{\textbf{42}} & \multicolumn{1}{r|}{730473} & \multicolumn{1}{r|}{392055243} & \multicolumn{1}{r|}{285} & \multicolumn{1}{r|}{187834339} & \multicolumn{1}{r|}{113} & \multicolumn{1}{r|}{289063445} & \multicolumn{1}{r|}{81} \\ \hline
+\multicolumn{1}{|c|}{\textbf{43}} & \multicolumn{1}{r|}{229368} & \multicolumn{1}{r|}{629303700} & \multicolumn{1}{r|}{178} & \multicolumn{1}{r|}{96861678} & \multicolumn{1}{r|}{1506} & \multicolumn{1}{r|}{1021582262} & \multicolumn{1}{r|}{38} \\ \hline
+\multicolumn{1}{|c|}{\textbf{44}} & \multicolumn{1}{r|}{78379} & \multicolumn{1}{r|}{9678801} & \multicolumn{1}{r|}{49} & \multicolumn{1}{r|}{616778051} & \multicolumn{1}{r|}{347} & \multicolumn{1}{r|}{47950631} & \multicolumn{1}{r|}{13} \\ \hline
+\multicolumn{1}{|c|}{\textbf{45}} & \multicolumn{1}{r|}{89000} & \multicolumn{1}{r|}{683836354} & \multicolumn{1}{r|}{300} & \multicolumn{1}{r|}{182132136} & \multicolumn{1}{r|}{148} & \multicolumn{1}{r|}{655792064} & \multicolumn{1}{r|}{612} \\ \hline
+\multicolumn{1}{|c|}{\textbf{46}} & \multicolumn{1}{r|}{24901} & \multicolumn{1}{r|}{114405869} & \multicolumn{1}{r|}{107} & \multicolumn{1}{r|}{227156101} & \multicolumn{1}{r|}{1755} & \multicolumn{1}{r|}{484360413} & \multicolumn{1}{r|}{187} \\ \hline
+\multicolumn{1}{|c|}{\textbf{47}} & \multicolumn{1}{r|}{43419} & \multicolumn{1}{r|}{129413855} & \multicolumn{1}{r|}{271} & \multicolumn{1}{r|}{280115103} & \multicolumn{1}{r|}{395} & \multicolumn{1}{r|}{93769359} & \multicolumn{1}{r|}{201} \\ \hline
+\multicolumn{1}{|c|}{\textbf{48}} & \multicolumn{1}{r|}{151337} & \multicolumn{1}{r|}{6882309} & \multicolumn{1}{r|}{5} & \multicolumn{1}{r|}{685620899} & \multicolumn{1}{r|}{987} & \multicolumn{1}{r|}{574204267} & \multicolumn{1}{r|}{277} \\ \hline
+\multicolumn{1}{|c|}{\textbf{49}} & \multicolumn{1}{r|}{148460} & \multicolumn{1}{r|}{215414888} & \multicolumn{1}{r|}{462} & \multicolumn{1}{r|}{340729066} & \multicolumn{1}{r|}{1662} & \multicolumn{1}{r|}{1985738} & \multicolumn{1}{r|}{528} \\ \hline
+\multicolumn{1}{|c|}{\textbf{50}} & \multicolumn{1}{r|}{66196} & \multicolumn{1}{r|}{530343560} & \multicolumn{1}{r|}{40} & \multicolumn{1}{r|}{5158498} & \multicolumn{1}{r|}{1242} & \multicolumn{1}{r|}{78772590} & \multicolumn{1}{r|}{200} \\ \hline
+\multicolumn{1}{|l|}{\textbf{Average}} & \multicolumn{1}{r|}{183865.58} & \multicolumn{1}{r|}{276128149} & \multicolumn{1}{r|}{175.82} & \multicolumn{1}{r|}{297708686.2} & \multicolumn{1}{r|}{641.82} & \multicolumn{1}{r|}{279218851.1} & \multicolumn{1}{r|}{255.78} \\ \hline
+\end{tabular}%
+}
+\end{table}
+
+\break
+%Timing of Algorithms
+\begin{table}[!htbp]
+\centering
+\caption{Timing of Algorithms}
+\label{timing}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{crrrrr|r|}
+\cline{2-7}
+\textbf{} & \multicolumn{2}{c}{\textbf{Repeated Random}} & \multicolumn{2}{c}{\textbf{Hill Climbing}} & \multicolumn{2}{c|}{\textbf{Simulated Annealing}} \\ \cline{2-7} 
+\multicolumn{1}{c|}{\textbf{}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} \\ \hline
+\multicolumn{1}{|c|}{\textbf{1}} & \multicolumn{1}{r|}{1.624} & \multicolumn{1}{r|}{11.357} & \multicolumn{1}{r|}{1.225} & \multicolumn{1}{r|}{6.029} & 3.053 & 17.423 \\ \hline
+\multicolumn{1}{|c|}{\textbf{2}} & \multicolumn{1}{r|}{1.683} & \multicolumn{1}{r|}{11.901} & \multicolumn{1}{r|}{1.214} & \multicolumn{1}{r|}{6.882} & 3.279 & 17.984 \\ \hline
+\multicolumn{1}{|c|}{\textbf{3}} & \multicolumn{1}{r|}{1.810} & \multicolumn{1}{r|}{15.245} & \multicolumn{1}{r|}{1.478} & \multicolumn{1}{r|}{7.191} & 3.621 & 18.459 \\ \hline
+\multicolumn{1}{|c|}{\textbf{4}} & \multicolumn{1}{r|}{1.713} & \multicolumn{1}{r|}{12.066} & \multicolumn{1}{r|}{1.328} & \multicolumn{1}{r|}{6.243} & 3.388 & 23.799 \\ \hline
+\multicolumn{1}{|c|}{\textbf{5}} & \multicolumn{1}{r|}{2.261} & \multicolumn{1}{r|}{14.322} & \multicolumn{1}{r|}{1.373} & \multicolumn{1}{r|}{6.852} & 3.337 & 18.882 \\ \hline
+\multicolumn{1}{|c|}{\textbf{6}} & \multicolumn{1}{r|}{1.862} & \multicolumn{1}{r|}{12.754} & \multicolumn{1}{r|}{1.142} & \multicolumn{1}{r|}{6.511} & 3.240 & 18.003 \\ \hline
+\multicolumn{1}{|c|}{\textbf{7}} & \multicolumn{1}{r|}{1.701} & \multicolumn{1}{r|}{12.180} & \multicolumn{1}{r|}{1.312} & \multicolumn{1}{r|}{6.660} & 3.270 & 18.092 \\ \hline
+\multicolumn{1}{|c|}{\textbf{8}} & \multicolumn{1}{r|}{1.644} & \multicolumn{1}{r|}{12.055} & \multicolumn{1}{r|}{1.275} & \multicolumn{1}{r|}{6.691} & 3.337 & 18.166 \\ \hline
+\multicolumn{1}{|c|}{\textbf{9}} & \multicolumn{1}{r|}{1.764} & \multicolumn{1}{r|}{13.270} & \multicolumn{1}{r|}{1.413} & \multicolumn{1}{r|}{7.793} & 3.724 & 17.966 \\ \hline
+\multicolumn{1}{|c|}{\textbf{10}} & \multicolumn{1}{r|}{1.919} & \multicolumn{1}{r|}{13.523} & \multicolumn{1}{r|}{1.283} & \multicolumn{1}{r|}{6.493} & 3.174 & 19.029 \\ \hline
+\multicolumn{1}{|c|}{\textbf{11}} & \multicolumn{1}{r|}{1.845} & \multicolumn{1}{r|}{14.133} & \multicolumn{1}{r|}{1.147} & \multicolumn{1}{r|}{6.467} & 3.339 & 18.053 \\ \hline
+\multicolumn{1}{|c|}{\textbf{12}} & \multicolumn{1}{r|}{1.672} & \multicolumn{1}{r|}{12.714} & \multicolumn{1}{r|}{1.289} & \multicolumn{1}{r|}{7.085} & 4.541 & 17.988 \\ \hline
+\multicolumn{1}{|c|}{\textbf{13}} & \multicolumn{1}{r|}{1.837} & \multicolumn{1}{r|}{12.457} & \multicolumn{1}{r|}{1.206} & \multicolumn{1}{r|}{6.806} & 4.015 & 16.708 \\ \hline
+\multicolumn{1}{|c|}{\textbf{14}} & \multicolumn{1}{r|}{1.549} & \multicolumn{1}{r|}{12.496} & \multicolumn{1}{r|}{1.306} & \multicolumn{1}{r|}{7.470} & 3.787 & 19.678 \\ \hline
+\multicolumn{1}{|c|}{\textbf{15}} & \multicolumn{1}{r|}{1.630} & \multicolumn{1}{r|}{12.842} & \multicolumn{1}{r|}{1.244} & \multicolumn{1}{r|}{6.170} & 3.345 & 19.188 \\ \hline
+\multicolumn{1}{|c|}{\textbf{16}} & \multicolumn{1}{r|}{1.760} & \multicolumn{1}{r|}{11.484} & \multicolumn{1}{r|}{1.124} & \multicolumn{1}{r|}{7.638} & 3.188 & 18.199 \\ \hline
+\multicolumn{1}{|c|}{\textbf{17}} & \multicolumn{1}{r|}{1.845} & \multicolumn{1}{r|}{12.175} & \multicolumn{1}{r|}{1.173} & \multicolumn{1}{r|}{6.367} & 3.084 & 17.990 \\ \hline
+\multicolumn{1}{|c|}{\textbf{18}} & \multicolumn{1}{r|}{1.686} & \multicolumn{1}{r|}{12.092} & \multicolumn{1}{r|}{1.573} & \multicolumn{1}{r|}{6.774} & 3.109 & 19.195 \\ \hline
+\multicolumn{1}{|c|}{\textbf{19}} & \multicolumn{1}{r|}{2.165} & \multicolumn{1}{r|}{15.772} & \multicolumn{1}{r|}{1.214} & \multicolumn{1}{r|}{6.535} & 3.235 & 20.834 \\ \hline
+\multicolumn{1}{|c|}{\textbf{20}} & \multicolumn{1}{r|}{1.864} & \multicolumn{1}{r|}{11.986} & \multicolumn{1}{r|}{1.069} & \multicolumn{1}{r|}{6.084} & 3.184 & 16.772 \\ \hline
+\multicolumn{1}{|c|}{\textbf{21}} & \multicolumn{1}{r|}{1.591} & \multicolumn{1}{r|}{11.439} & \multicolumn{1}{r|}{1.100} & \multicolumn{1}{r|}{5.835} & 2.984 & 17.577 \\ \hline
+\multicolumn{1}{|c|}{\textbf{22}} & \multicolumn{1}{r|}{1.546} & \multicolumn{1}{r|}{11.660} & \multicolumn{1}{r|}{1.122} & \multicolumn{1}{r|}{5.774} & 3.124 & 16.745 \\ \hline
+\multicolumn{1}{|c|}{\textbf{23}} & \multicolumn{1}{r|}{1.629} & \multicolumn{1}{r|}{11.440} & \multicolumn{1}{r|}{1.219} & \multicolumn{1}{r|}{5.730} & 2.964 & 16.797 \\ \hline
+\multicolumn{1}{|c|}{\textbf{24}} & \multicolumn{1}{r|}{1.574} & \multicolumn{1}{r|}{11.427} & \multicolumn{1}{r|}{1.087} & \multicolumn{1}{r|}{6.018} & 3.236 & 17.676 \\ \hline
+\multicolumn{1}{|c|}{\textbf{25}} & \multicolumn{1}{r|}{1.627} & \multicolumn{1}{r|}{11.339} & \multicolumn{1}{r|}{1.204} & \multicolumn{1}{r|}{6.687} & 3.371 & 17.972 \\ \hline
+\multicolumn{1}{|c|}{\textbf{26}} & \multicolumn{1}{r|}{1.571} & \multicolumn{1}{r|}{12.169} & \multicolumn{1}{r|}{1.088} & \multicolumn{1}{r|}{5.973} & 3.017 & 17.212 \\ \hline
+\multicolumn{1}{|c|}{\textbf{27}} & \multicolumn{1}{r|}{1.718} & \multicolumn{1}{r|}{12.124} & \multicolumn{1}{r|}{1.187} & \multicolumn{1}{r|}{6.220} & 3.146 & 17.377 \\ \hline
+\multicolumn{1}{|c|}{\textbf{28}} & \multicolumn{1}{r|}{1.601} & \multicolumn{1}{r|}{11.768} & \multicolumn{1}{r|}{1.245} & \multicolumn{1}{r|}{6.105} & 2.920 & 17.126 \\ \hline
+\multicolumn{1}{|c|}{\textbf{29}} & \multicolumn{1}{r|}{1.783} & \multicolumn{1}{r|}{12.275} & \multicolumn{1}{r|}{1.329} & \multicolumn{1}{r|}{6.542} & 3.016 & 17.973 \\ \hline
+\multicolumn{1}{|c|}{\textbf{30}} & \multicolumn{1}{r|}{1.699} & \multicolumn{1}{r|}{12.287} & \multicolumn{1}{r|}{1.159} & \multicolumn{1}{r|}{6.610} & 3.108 & 16.850 \\ \hline
+\multicolumn{1}{|c|}{\textbf{31}} & \multicolumn{1}{r|}{1.597} & \multicolumn{1}{r|}{12.003} & \multicolumn{1}{r|}{1.104} & \multicolumn{1}{r|}{6.108} & 3.108 & 17.215 \\ \hline
+\multicolumn{1}{|c|}{\textbf{32}} & \multicolumn{1}{r|}{1.629} & \multicolumn{1}{r|}{11.842} & \multicolumn{1}{r|}{1.142} & \multicolumn{1}{r|}{6.877} & 3.481 & 19.382 \\ \hline
+\multicolumn{1}{|c|}{\textbf{33}} & \multicolumn{1}{r|}{1.787} & \multicolumn{1}{r|}{12.568} & \multicolumn{1}{r|}{1.179} & \multicolumn{1}{r|}{7.114} & 3.540 & 20.375 \\ \hline
+\multicolumn{1}{|c|}{\textbf{34}} & \multicolumn{1}{r|}{1.769} & \multicolumn{1}{r|}{12.258} & \multicolumn{1}{r|}{1.101} & \multicolumn{1}{r|}{7.279} & 3.550 & 20.576 \\ \hline
+\multicolumn{1}{|c|}{\textbf{35}} & \multicolumn{1}{r|}{1.755} & \multicolumn{1}{r|}{11.982} & \multicolumn{1}{r|}{1.300} & \multicolumn{1}{r|}{6.302} & 3.164 & 17.508 \\ \hline
+\multicolumn{1}{|c|}{\textbf{36}} & \multicolumn{1}{r|}{1.688} & \multicolumn{1}{r|}{12.087} & \multicolumn{1}{r|}{1.286} & \multicolumn{1}{r|}{6.499} & 3.427 & 18.410 \\ \hline
+\multicolumn{1}{|c|}{\textbf{37}} & \multicolumn{1}{r|}{1.724} & \multicolumn{1}{r|}{12.484} & \multicolumn{1}{r|}{1.272} & \multicolumn{1}{r|}{6.727} & 3.297 & 18.729 \\ \hline
+\multicolumn{1}{|c|}{\textbf{38}} & \multicolumn{1}{r|}{1.833} & \multicolumn{1}{r|}{12.799} & \multicolumn{1}{r|}{1.501} & \multicolumn{1}{r|}{12.022} & 4.902 & 23.656 \\ \hline
+\multicolumn{1}{|c|}{\textbf{39}} & \multicolumn{1}{r|}{1.877} & \multicolumn{1}{r|}{15.128} & \multicolumn{1}{r|}{1.409} & \multicolumn{1}{r|}{6.935} & 3.657 & 19.142 \\ \hline
+\multicolumn{1}{|c|}{\textbf{40}} & \multicolumn{1}{r|}{1.729} & \multicolumn{1}{r|}{13.128} & \multicolumn{1}{r|}{1.193} & \multicolumn{1}{r|}{6.874} & 4.116 & 21.917 \\ \hline
+\multicolumn{1}{|c|}{\textbf{41}} & \multicolumn{1}{r|}{1.943} & \multicolumn{1}{r|}{12.272} & \multicolumn{1}{r|}{1.238} & \multicolumn{1}{r|}{6.322} & 3.326 & 18.204 \\ \hline
+\multicolumn{1}{|c|}{\textbf{42}} & \multicolumn{1}{r|}{1.890} & \multicolumn{1}{r|}{12.289} & \multicolumn{1}{r|}{1.042} & \multicolumn{1}{r|}{6.268} & 3.535 & 21.559 \\ \hline
+\multicolumn{1}{|c|}{\textbf{43}} & \multicolumn{1}{r|}{1.948} & \multicolumn{1}{r|}{14.638} & \multicolumn{1}{r|}{1.230} & \multicolumn{1}{r|}{7.010} & 3.400 & 18.319 \\ \hline
+\multicolumn{1}{|c|}{\textbf{44}} & \multicolumn{1}{r|}{1.759} & \multicolumn{1}{r|}{12.039} & \multicolumn{1}{r|}{1.126} & \multicolumn{1}{r|}{8.983} & 3.536 & 17.950 \\ \hline
+\multicolumn{1}{|c|}{\textbf{45}} & \multicolumn{1}{r|}{1.781} & \multicolumn{1}{r|}{12.742} & \multicolumn{1}{r|}{1.230} & \multicolumn{1}{r|}{6.369} & 3.206 & 18.557 \\ \hline
+\multicolumn{1}{|c|}{\textbf{46}} & \multicolumn{1}{r|}{1.761} & \multicolumn{1}{r|}{11.987} & \multicolumn{1}{r|}{1.106} & \multicolumn{1}{r|}{6.165} & 3.196 & 19.090 \\ \hline
+\multicolumn{1}{|c|}{\textbf{47}} & \multicolumn{1}{r|}{1.571} & \multicolumn{1}{r|}{11.459} & \multicolumn{1}{r|}{1.262} & \multicolumn{1}{r|}{6.113} & 3.270 & 17.434 \\ \hline
+\multicolumn{1}{|c|}{\textbf{48}} & \multicolumn{1}{r|}{1.613} & \multicolumn{1}{r|}{12.167} & \multicolumn{1}{r|}{1.262} & \multicolumn{1}{r|}{6.323} & 3.127 & 17.755 \\ \hline
+\multicolumn{1}{|c|}{\textbf{49}} & \multicolumn{1}{r|}{1.705} & \multicolumn{1}{r|}{11.707} & \multicolumn{1}{r|}{1.082} & \multicolumn{1}{r|}{6.170} & 3.175 & 18.026 \\ \hline
+\multicolumn{1}{|c|}{\textbf{50}} & \multicolumn{1}{r|}{1.837} & \multicolumn{1}{r|}{12.056} & \multicolumn{1}{r|}{1.310} & \multicolumn{1}{r|}{6.163} & 3.206 & 18.448 \\ \hline
+\multicolumn{1}{|c|}{\textbf{Average}} & \multicolumn{1}{r|}{1.747} & \multicolumn{1}{r|}{12.488} & \multicolumn{1}{r|}{1.230} & \multicolumn{1}{r|}{6.697} & 3.367 & 18.559 \\ \hline
+\end{tabular}%
+}
+\end{table}
+
+\section{Using the Karmarkar-Karp Solution as a Starting Point}
+As per our results, the Karmarkar-Karp (KK) algorithm provided a residue that was consistently lower than the random algorithms. As such, the KK algorithm's residue could be used as an upper bound when creating 
+
+\end{document}
