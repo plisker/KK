@@ -39,8 +39,13 @@ As can be seen in the tables found at the end of this section, there is a signif
 \item Pre-Partitioning consistently returns \textit{significantly} better residues than Random
 \item Random is consistently faster in running time than Pre-Partitioning
 \end{enumerate}
+These results should not be surprising. I'll analyze both separately.
 
+\paragraph{(1)} Each of the random algorithms proceeds by randomly choosing a solution (denoted by an array of $+1$ and $-1$) and determines the residue by adding/subtracting values according to the solution. Then, via some process specific to the algorithm, it determines another solutions, checks to see whether the residue is smaller, and if so, it then (with some probability) switches. Not surprisingly, this entirely random approach provides a worse solution than the K-K algorithm, which proceeds via a deterministic heuristic, thus resulting in consistently better results. Since the pre-partitioning algorithms determine a pre-partition first and then a residue with K-K, switching to other pre-partitions (with some probability) only if the K-K residue is smaller, it is not surprising that the overall residues by these pre-partition algorithms are better.
 
+\paragraph{(2)} Following the above explanation, it is easy to see why each of the pre-partitioning algorithms, though resulting in better residues, also take longer; in each iteration, they calculate residues via the K-K algorithm, which in our implementation takes $O(n^2)$, though it can be implemented in $O(n \log{n})$. Thus, the overall runtime of these algorithms are $O(n^2)$, whereas the random algorithms are simply $O(n)$, on the presumption that arithmetic operations take $O(1)$.\\
+
+Comparing each of the algorithms, we can see that repeated random provided a better solution, on average, than the average of simulated annealing, which was better than the average of hill climbing. This is ultimately because simulated annealing and hill climbing are entirely dependent on the initial randomized guess; if they guess well, then the residue can be extremely low (with simulated annealing we got 1 once); on the other hand, a poor initial randomized guess will result in a poor residue since each better guess must be a neighbor of the original guess. On the other hand, repeated random is unencumbered by the initial guess, thus allowing it the flexibility of reaching much better solutions.
 
 \break
 % Residues of algorithms
@@ -53,7 +58,7 @@ As can be seen in the tables found at the end of this section, there is a signif
 \begin{tabular}{crrrrrrr}
 \cline{2-8}
 \multicolumn{1}{r}{\textbf{}} & \multicolumn{1}{c}{\textbf{KK}} & \multicolumn{2}{c}{\textbf{Repeated Random}} & \multicolumn{2}{c}{\textbf{Hill Climbing}} & \multicolumn{2}{c}{\textbf{Simulated Annealing}} \\ \cline{2-8} 
-\multicolumn{1}{r|}{\textbf{}} & \multicolumn{1}{c|}{\textbf{--}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} \\ \hline
+\multicolumn{1}{r|}{\textbf{}} & \multicolumn{1}{c|}{\textbf{--}} & \multicolumn{1}{c|}{\textbf{Random Move}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} & \multicolumn{1}{c|}{\textbf{Random Move}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} & \multicolumn{1}{c|}{\textbf{Random Move}} & \multicolumn{1}{c|}{\textbf{Pre-Partition}} \\ \hline
 \multicolumn{1}{|c|}{\textbf{1}} & \multicolumn{1}{r|}{92468} & \multicolumn{1}{r|}{126767794} & \multicolumn{1}{r|}{340} & \multicolumn{1}{r|}{192763984} & \multicolumn{1}{r|}{696} & \multicolumn{1}{r|}{40894316} & \multicolumn{1}{r|}{364} \\ \hline
 \multicolumn{1}{|c|}{\textbf{2}} & \multicolumn{1}{r|}{67336} & \multicolumn{1}{r|}{576168954} & \multicolumn{1}{r|}{168} & \multicolumn{1}{r|}{51437702} & \multicolumn{1}{r|}{730} & \multicolumn{1}{r|}{41436818} & \multicolumn{1}{r|}{136} \\ \hline
 \multicolumn{1}{|c|}{\textbf{3}} & \multicolumn{1}{r|}{386590} & \multicolumn{1}{r|}{51334430} & \multicolumn{1}{r|}{26} & \multicolumn{1}{r|}{257323932} & \multicolumn{1}{r|}{512} & \multicolumn{1}{r|}{132055062} & \multicolumn{1}{r|}{186} \\ \hline
@@ -104,7 +109,7 @@ As can be seen in the tables found at the end of this section, there is a signif
 \multicolumn{1}{|c|}{\textbf{48}} & \multicolumn{1}{r|}{151337} & \multicolumn{1}{r|}{6882309} & \multicolumn{1}{r|}{5} & \multicolumn{1}{r|}{685620899} & \multicolumn{1}{r|}{987} & \multicolumn{1}{r|}{574204267} & \multicolumn{1}{r|}{277} \\ \hline
 \multicolumn{1}{|c|}{\textbf{49}} & \multicolumn{1}{r|}{148460} & \multicolumn{1}{r|}{215414888} & \multicolumn{1}{r|}{462} & \multicolumn{1}{r|}{340729066} & \multicolumn{1}{r|}{1662} & \multicolumn{1}{r|}{1985738} & \multicolumn{1}{r|}{528} \\ \hline
 \multicolumn{1}{|c|}{\textbf{50}} & \multicolumn{1}{r|}{66196} & \multicolumn{1}{r|}{530343560} & \multicolumn{1}{r|}{40} & \multicolumn{1}{r|}{5158498} & \multicolumn{1}{r|}{1242} & \multicolumn{1}{r|}{78772590} & \multicolumn{1}{r|}{200} \\ \hline
-\multicolumn{1}{|l|}{\textbf{Average}} & \multicolumn{1}{r|}{183865.58} & \multicolumn{1}{r|}{276128149} & \multicolumn{1}{r|}{175.82} & \multicolumn{1}{r|}{297708686.2} & \multicolumn{1}{r|}{641.82} & \multicolumn{1}{r|}{279218851.1} & \multicolumn{1}{r|}{255.78} \\ \hline
+\multicolumn{1}{|l|}{\textbf{Average}} & \multicolumn{1}{r|}{\textbf{183865.58}} & \multicolumn{1}{r|}{\textbf{276128149}} & \multicolumn{1}{r|}{\textbf{175.82}} & \multicolumn{1}{r|}{\textbf{297708686.2}} & \multicolumn{1}{r|}{\textbf{641.82}} & \multicolumn{1}{r|}{\textbf{279218851.1}} & \multicolumn{1}{r|}{\textbf{255.78}} \\ \hline
 \end{tabular}%
 }
 \end{table}
@@ -119,7 +124,7 @@ As can be seen in the tables found at the end of this section, there is a signif
 \begin{tabular}{crrrrr|r|}
 \cline{2-7}
 \textbf{} & \multicolumn{2}{c}{\textbf{Repeated Random}} & \multicolumn{2}{c}{\textbf{Hill Climbing}} & \multicolumn{2}{c|}{\textbf{Simulated Annealing}} \\ \cline{2-7} 
-\multicolumn{1}{c|}{\textbf{}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} & \multicolumn{1}{c|}{\textbf{Random Solution}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} \\ \hline
+\multicolumn{1}{c|}{\textbf{}} & \multicolumn{1}{c|}{\textbf{Random Move}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} & \multicolumn{1}{c|}{\textbf{Random Move}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} & \multicolumn{1}{c|}{\textbf{Random Move}} & \multicolumn{1}{c|}{\textbf{Pre-Partitioning}} \\ \hline
 \multicolumn{1}{|c|}{\textbf{1}} & \multicolumn{1}{r|}{1.624} & \multicolumn{1}{r|}{11.357} & \multicolumn{1}{r|}{1.225} & \multicolumn{1}{r|}{6.029} & 3.053 & 17.423 \\ \hline
 \multicolumn{1}{|c|}{\textbf{2}} & \multicolumn{1}{r|}{1.683} & \multicolumn{1}{r|}{11.901} & \multicolumn{1}{r|}{1.214} & \multicolumn{1}{r|}{6.882} & 3.279 & 17.984 \\ \hline
 \multicolumn{1}{|c|}{\textbf{3}} & \multicolumn{1}{r|}{1.810} & \multicolumn{1}{r|}{15.245} & \multicolumn{1}{r|}{1.478} & \multicolumn{1}{r|}{7.191} & 3.621 & 18.459 \\ \hline
@@ -170,12 +175,27 @@ As can be seen in the tables found at the end of this section, there is a signif
 \multicolumn{1}{|c|}{\textbf{48}} & \multicolumn{1}{r|}{1.613} & \multicolumn{1}{r|}{12.167} & \multicolumn{1}{r|}{1.262} & \multicolumn{1}{r|}{6.323} & 3.127 & 17.755 \\ \hline
 \multicolumn{1}{|c|}{\textbf{49}} & \multicolumn{1}{r|}{1.705} & \multicolumn{1}{r|}{11.707} & \multicolumn{1}{r|}{1.082} & \multicolumn{1}{r|}{6.170} & 3.175 & 18.026 \\ \hline
 \multicolumn{1}{|c|}{\textbf{50}} & \multicolumn{1}{r|}{1.837} & \multicolumn{1}{r|}{12.056} & \multicolumn{1}{r|}{1.310} & \multicolumn{1}{r|}{6.163} & 3.206 & 18.448 \\ \hline
-\multicolumn{1}{|c|}{\textbf{Average}} & \multicolumn{1}{r|}{1.747} & \multicolumn{1}{r|}{12.488} & \multicolumn{1}{r|}{1.230} & \multicolumn{1}{r|}{6.697} & 3.367 & 18.559 \\ \hline
+\multicolumn{1}{|c|}{\textbf{Average}} & \multicolumn{1}{r|}{\textbf{1.747}} & \multicolumn{1}{r|}{\textbf{12.488}} & \multicolumn{1}{r|}{\textbf{1.230}} & \multicolumn{1}{r|}{\textbf{6.697}} & \textbf{3.367} & \textbf{18.559} \\ \hline
 \end{tabular}%
 }
 \end{table}
 
-\section{Using the Karmarkar-Karp Solution as a Starting Point}
-As per our results, the Karmarkar-Karp (KK) algorithm provided a residue that was consistently lower than the random algorithms. As such, the KK algorithm's residue could be used as an upper bound when creating 
+\begin{figure}
+\caption{A comparison of the relative residues for the three algorithms, using random move}
+\includegraphics[scale=0.6]{rm_graph.png}
+\centering
+\end{figure}
+\begin{figure}
+\caption{A comparison of the relative residues for the three algorithms, using pre-partitioning}
+\includegraphics[scale=0.6]{pp_graph.png}
+\centering
+\end{figure}
+
+\section{Using the Karmarkar-Karp Solution as a Starting Point for the Randomized Algorithms}
+As per our results, the Karmarkar-Karp (KK) algorithm provided a residue that was consistently lower than the algorithms involving random move.  Thus it could be useful to generate an initial solution $S$ using the KK algorithm rather than generating a solution at random.  Given that the KK algorithm yielded a better solution (i.e. lower residue) than did the random move, we have reason to believe that running the three iterative algorithms (repeated random, hill climbing, and simulated) after an initial run of KK would yield even better solutions than those that the three algorithms yielded using random move.  Alternatively, running KK in combination with these three algorithms could yield a similarly viable solution in fewer iterations.\\
+
+Using KK would be particularly useful for the hill-climbing and simulated annealing algorithms, as these two involve randomly selecting from the neighbors of the initial solution, and so a better initial solution would yield to a better overall residue (or fewer iterations).  Repeated random, on the other hand, involves iterations in which random solutions in the space are generated, and so the initial solution is not as impactful (apart from checking the relative residues, which is done in all 3 algorithms).
+
+
 
 \end{document}
